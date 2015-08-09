@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="angular.min.js"></script>
+	</head>
+	<body ng-app="Graphs">
+		<div ng-controller="GraphController">
+			<div ng-repeat="plot in plots">
+				<graph graph="plot"></graph>
+			</div>
+		</div>
+		<script src="graphApp.js"></script>
+		<script src="graphController.js"></script>
+		<script src="directives/graph.js"></script>
+	</body>
+</html>

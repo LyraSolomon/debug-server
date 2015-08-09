@@ -1,0 +1,14 @@
+<p>{{graph.title}}</p>
+<p>x: {{graph.x}}</p>
+<p>y: {{graph.y}}</p>
+<svg width="200" height="200">
+<div ng-repeat="series in graph.data">
+	<p>
+		{{series.color}}
+		<span ng-repeat="point in series.data track by $index">
+			{{point}}
+		</span>
+	</p>
+	<circle cx="50" cy="50" r="40" stroke="{{series.color}}" stroke-width="10" />
+<div>
+</svg>
