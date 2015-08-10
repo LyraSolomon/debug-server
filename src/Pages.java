@@ -8,7 +8,7 @@ public class Pages {
 	{
 		String[] lines = Files.readAllLines(Paths.get(fileName), Charset.defaultCharset()).toArray(new String[1]);
 		String retval="";
-		for(int i=0; i<lines.length; i++) retval+=lines[i];
+		for(int i=0; i<lines.length; i++) retval+=lines[i]+"\n";
 		return retval;
 	}
 }

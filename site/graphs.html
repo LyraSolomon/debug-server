@@ -6,11 +6,15 @@
 	<body ng-app="Graphs">
 		<div ng-controller="GraphController">
 			<div ng-repeat="plot in plots">
-				<graph graph="plot"></graph>
+				<p>{{plot.title}}</p>
+				<p>x: time</p>
+				<p>y: {{plot.y}}</p>
+				<img src="qwe.svg">
+				<a href="qwe.svg">click</a>
+				<p> currently: {{plot.val}}</p>
 			</div>
 		</div>
 		<script src="graphApp.js"></script>
 		<script src="graphController.js"></script>
-		<script src="directives/graph.js"></script>
 	</body>
 </html>

@@ -31,7 +31,6 @@ public class Server implements Runnable{
 				// wait for a connection
 				Socket remote = s.accept();
 				// remote is now the connected socket
-				System.out.println("Connection, sending data.");
 				BufferedReader in = new BufferedReader(new InputStreamReader(remote.getInputStream()));
 				PrintWriter out = new PrintWriter(remote.getOutputStream());
 				String []strings = null;
@@ -56,7 +55,11 @@ public class Server implements Runnable{
 				if(URL.equals("site/")) URL="site/main";
 				try
 				{
-					response=Pages.loadFromFile(URL);
+					/*if(URL.endsWith(".svg"))
+						response="<!--?xml version=\"1.0\" standalone=\"no\"?-->"
+								+ "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\">"
+								+ "<circle cx=\"50\" cy=\"50\" r=\"40\" /></svg>";
+					else*/ response=Pages.loadFromFile(URL);
 					out.println("HTTP/1.1 200 OK");
 					out.println("");
 					out.println(response);
