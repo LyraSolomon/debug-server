@@ -43,8 +43,17 @@ public class Server implements Runnable{
 					out.flush();
 					remote.close();
 				}
-				
-				String URL=strings[0].substring(1);
+				String URL="";
+				try
+				{
+					URL=strings[0].substring(1);
+				}
+				catch(NullPointerException e)
+				{
+					out.println("HTTP/1.1 400 Bad Request");
+					out.println("Please fill out all parts of the form");
+					continue;
+				}
 				HashMap<String, String> vars=new HashMap<String, String>();
 				for(int i=1; i<strings.length-1; i+=2)
 				{
@@ -53,8 +62,7 @@ public class Server implements Runnable{
 				String response="";
 				try
 				{
-					/*if(URL.equals("dynamic_graphs.html")) response=""+Math.random();
-					else*/ response=Pages.get(URL, vars);
+					response=Pages.get(URL, vars);
 					out.println("HTTP/1.1 200 OK");
 					out.println("");
 					out.println(response);
@@ -69,25 +77,22 @@ public class Server implements Runnable{
 				remote.close();
 			} catch (Exception e) {
 				System.out.println("Error: " + e);
+				e.printStackTrace();
 			}
 		}
 	}
 
 	private String[] splitReq(String str) throws Exception {
-		System.out.println(str);
 		StringTokenizer tokenizer=new StringTokenizer(str, " ");
 		ArrayList<String> retval=new ArrayList<String>();
 		if(!(tokenizer.countTokens()>2)) throw new Exception("HTTP/1.1 400 Bad Request");
 		if(!tokenizer.nextToken().equals("GET")) throw new Exception("HTTP/1.1 501 Not Implemented");
-		tokenizer=new StringTokenizer(tokenizer.nextToken(), "?");//Split a GET request
+		tokenizer=new StringTokenizer(tokenizer.nextToken(), "?");
 		retval.add(tokenizer.nextToken());
 		if(tokenizer.hasMoreElements())
 		{
-			String TEST=tokenizer.nextToken();
-			System.out.println(TEST);
-			tokenizer=new StringTokenizer(TEST, "=&");
-			System.out.println(tokenizer.countTokens());
-			if(tokenizer.countTokens()%2!=0) throw new Exception("HTTP/1.1 400 Bad Request");
+			tokenizer=new StringTokenizer(tokenizer.nextToken(), "=&");
+			if(tokenizer.countTokens()%2!=0) throw new Exception("HTTP/1.1 400 Fill out all parts of the form");
 			while(tokenizer.hasMoreElements()) retval.add(tokenizer.nextToken());
 		}
 		return retval.toArray(new String[1]);
