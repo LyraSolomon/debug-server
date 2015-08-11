@@ -1,20 +1,16 @@
 <!doctype html>
 <html>
 	<head>
-		<script src="angular.min.js"></script>
+		<script src="jquery-2.1.4.min.js"></script>
+		<script>
+		$(function(){
+			setInterval(function(){
+				$('#include').load('dynamic_graphs.html');
+			}, 1000);
+		});
+		</script>
 	</head>
-	<body ng-app="Graphs">
-		<div ng-controller="GraphController">
-			<div ng-repeat="plot in plots">
-				<p>{{plot.title}}</p>
-				<p>x: time</p>
-				<p>y: {{plot.y}}</p>
-				<img src="qwe.svg">
-				<a href="qwe.svg">click</a>
-				<p> currently: {{plot.val}}</p>
-			</div>
-		</div>
-		<script src="graphApp.js"></script>
-		<script src="graphController.js"></script>
+	<body>
+		<div id="include"></div>
 	</body>
 </html>
