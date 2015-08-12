@@ -67,7 +67,7 @@ public class Graphs extends DynamicPage {
 			for(int i=0; i<contents.size(); i++)
 			{
 				retval+="<h2>"+contents.get(i).title+"</h2>";
-				retval+="<svg width=\"150\" height=\"110\">";
+				retval+="<svg width=\"200\" height=\"110\">";
 				retval+="<polygon points=\"0,5 100,5 100,105, 0,105\" style="
 						+ "\"fill:none;stroke:black;stroke-width:1;\" />";
 				if(contents.get(i).max>contents.get(i).min&&historySize>1)
@@ -86,8 +86,11 @@ public class Graphs extends DynamicPage {
 					retval+="<text x=\"100\" y=\"10\" fill=\"black\">"+
 							contents.get(i).max+"</text>";
 					retval+="<text x=\"100\" y=\"110\" fill=\"black\">"+
-							contents.get(i).min+"</text>";
+							contents.get(i).min+"</text></svg>";
 				}
+				if(contents.get(i).data.size()>0) 
+					retval+="<p>currently: "+
+						contents.get(i).data.get(contents.get(i).data.size()-1)+"</p>";
 			}
 			return retval;
 		}

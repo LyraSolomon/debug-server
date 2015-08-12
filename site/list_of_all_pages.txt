@@ -1,0 +1,9 @@
+jquery-2.1.4.min.js
+list_of_all_pages.txt
+main.html
+graphs.html
+dynamic_graphs.html
+add_graph_data.html
+text.html
+dynamic_graphs.html
+add_graph_data.html

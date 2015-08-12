@@ -7,12 +7,10 @@ import dynamicPages.*;
 
 
 public class Pages {
-	static DynamicPage []pages;
-	public static void init()
-	{
-		pages=new DynamicPage[1];
-		pages[0]=new Graphs();
-	}
+	static DynamicPage []pages={
+		new Graphs(),
+		new Text()
+	};
 	public static String loadFromFile(String fileName) throws IOException
 	{
 		String[] lines = Files.readAllLines(Paths.get(fileName), Charset.defaultCharset()).toArray(new String[1]);

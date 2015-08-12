@@ -14,7 +14,7 @@ public class Server implements Runnable{
 	@Override
 	public void run() {
 		ServerSocket s;
-
+		System.setProperty("file.encoding", "UTF-8");
 		System.out.println("Webserver starting up on port 80");
 		System.out.println("(press ctrl-c to exit)");
 		try {
@@ -24,7 +24,6 @@ public class Server implements Runnable{
 			System.out.println("Error: " + e);
 			return;
 		}
-		Pages.init();
 		System.out.println("Waiting for connection");
 		for (;;) {
 			try {
@@ -38,6 +37,8 @@ public class Server implements Runnable{
 				catch(Exception e)
 				{
 					out.println(e.toString().substring(21));
+					out.println("Content-Type: text/html; charset=UTF-8");
+					out.println("Connection: close");
 					out.println();
 					out.println(e.toString().substring(21));
 					out.flush();
@@ -51,7 +52,12 @@ public class Server implements Runnable{
 				catch(NullPointerException e)
 				{
 					out.println("HTTP/1.1 400 Bad Request");
+					out.println("Content-Type: text/html; charset=UTF-8");
+					out.println("Connection: close");
+					out.println();
 					out.println("Please fill out all parts of the form");
+					out.flush();
+					remote.close();
 					continue;
 				}
 				HashMap<String, String> vars=new HashMap<String, String>();
@@ -59,17 +65,22 @@ public class Server implements Runnable{
 				{
 					vars.put(strings[i], strings[i+1]);
 				}
+				if(strings[0].endsWith("/")) URL+="main.html";
 				String response="";
 				try
 				{
 					response=Pages.get(URL, vars);
 					out.println("HTTP/1.1 200 OK");
+					out.println("Content-Type: text/html; charset=UTF-8");
+					out.println("Connection: close");
 					out.println("");
 					out.println(response);
 				}
 				catch(IOException e)
 				{
 					out.println("HTTP/1.1 404 Not Found");
+					out.println("Content-Type: text/html; charset=UTF-8");
+					out.println("Connection: close");
 					out.println("");
 					out.println("Error 404: resource not found.");
 				}
@@ -88,12 +99,13 @@ public class Server implements Runnable{
 		if(!(tokenizer.countTokens()>2)) throw new Exception("HTTP/1.1 400 Bad Request");
 		if(!tokenizer.nextToken().equals("GET")) throw new Exception("HTTP/1.1 501 Not Implemented");
 		tokenizer=new StringTokenizer(tokenizer.nextToken(), "?");
-		retval.add(tokenizer.nextToken());
+		retval.add(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
 		if(tokenizer.hasMoreElements())
 		{
 			tokenizer=new StringTokenizer(tokenizer.nextToken(), "=&");
 			if(tokenizer.countTokens()%2!=0) throw new Exception("HTTP/1.1 400 Fill out all parts of the form");
-			while(tokenizer.hasMoreElements()) retval.add(tokenizer.nextToken());
+			while(tokenizer.hasMoreElements()) 
+				retval.add(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
 		}
 		return retval.toArray(new String[1]);
 	}
