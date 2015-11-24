@@ -10,10 +10,10 @@
 #include <strings.h>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 #include <pthread.h>
 using namespace std;
 
-void *task1(void *);
 std::string getReply(std::string str);
 
 static int connFd;
@@ -24,8 +24,6 @@ int main(int argc, char* argv[])
     socklen_t len; //store size of the address
     bool loop = false;
     struct sockaddr_in svrAdd, clntAdd;
-    
-    pthread_t threadA[3];
     
     if (argc < 2)
     {
@@ -66,8 +64,6 @@ int main(int argc, char* argv[])
     listen(listenFd, 5);
     
     len = sizeof(clntAdd);
-    
-    int noThread = 0;
 
     while (true)
     {
@@ -86,44 +82,53 @@ int main(int argc, char* argv[])
             cout << "Connection successful" << endl;
         }
         
-        //pthread_create(&threadA[noThread], NULL, task1, NULL); 
-        task1(0);
-        noThread++;
+        char test[257];
+		std::string str="";
+		bool loop = false;
+		while(!loop)
+		{    
+			bzero(test, 257);
+			int i=read(connFd, test, 256);
+			str += test;
+			//std::cout<<test;
+			
+			if(str.find("\r\n\r\n")!=std::string::npos)
+				break;
+		}
+		try{
+		std::string reply=getReply(str);
+		}catch(std::string e){}
+		write(connFd, reply.c_str(), reply.length());
+		cout << "\nClosing thread and conn" << endl;
+		close(connFd);
     }
-    
-    for(int i = 0; i < 3; i++)
-    {
-        pthread_join(threadA[i], NULL);
-    }
-    
-    
-}
-
-void *task1 (void *dummyPt)
-{
-    cout << "Thread No: " << pthread_self() << endl;
-    char test[257];
-    std::string str="";
-    bool loop = false;
-    while(!loop)
-    {    
-        bzero(test, 257);
-        
-        
-        int i=read(connFd, test, 256);
-        str += test;
-        std::cout<<test;
-        
-        if(str.find("\r\n\r\n")!=std::string::npos)
-            break;
-    }
-    std::string reply=getReply(str);
-    write(connFd, reply.c_str(), reply.length());
-    cout << "\nClosing thread and conn" << endl;
-    close(connFd);
 }
 
 std::string getReply(std::string str)
 {
+	std::string delimiter = "\r\n";
+	std::vector<std::string> tokens;
+	size_t pos = 0;
+	std::string token;
+	while ((pos = str.find(delimiter)) != std::string::npos) {
+		token = str.substr(0, pos);
+		if(token != "") tokens.push_back(token);
+		str.erase(0, pos + delimiter.length());
+	}
+	str=tokens[0];
+	tokens.clear();
+	delimiter = " ";
+	while ((pos = str.find(delimiter)) != std::string::npos) {
+		token = str.substr(0, pos);
+		if(token != "") tokens.push_back(token);
+		str.erase(0, pos + delimiter.length());
+	}
+	tokens.push_back(str);
+	for(int i=0; i<tokens.size(); i++) std::cout<< tokens[i] << " FOO\r\n";
+	if(tokens.size()!=3) throw std::string("HTTP/1.1 400 Bad Request");
+	if(tokens[0]!="GET") throw std::string("HTTP/1.1 501 Not Implemented");
+	if(tokens[2]!="HTTP/1.1") throw std::string("HTTP/1.1 501 Not Implemented");
+	
+	//tokens.push_back(token);
 	return "HTTP/1.1 200 OK\r\n\r\nhello world\r\n\r\n";
 }
