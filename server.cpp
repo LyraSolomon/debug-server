@@ -95,9 +95,8 @@ int main(int argc, char* argv[])
 			if(str.find("\r\n\r\n")!=std::string::npos)
 				break;
 		}
-		try{
-		std::string reply=getReply(str);
-		}catch(std::string e){}
+		std::string reply;
+		reply=getReply(str);
 		write(connFd, reply.c_str(), reply.length());
 		cout << "\nClosing thread and conn" << endl;
 		close(connFd);
@@ -115,6 +114,7 @@ std::string getReply(std::string str)
 		if(token != "") tokens.push_back(token);
 		str.erase(0, pos + delimiter.length());
 	}
+	
 	str=tokens[0];
 	tokens.clear();
 	delimiter = " ";
@@ -124,11 +124,33 @@ std::string getReply(std::string str)
 		str.erase(0, pos + delimiter.length());
 	}
 	tokens.push_back(str);
-	for(int i=0; i<tokens.size(); i++) std::cout<< tokens[i] << " FOO\r\n";
-	if(tokens.size()!=3) throw std::string("HTTP/1.1 400 Bad Request");
-	if(tokens[0]!="GET") throw std::string("HTTP/1.1 501 Not Implemented");
-	if(tokens[2]!="HTTP/1.1") throw std::string("HTTP/1.1 501 Not Implemented");
 	
-	//tokens.push_back(token);
+	//for(int i=0; i<tokens.size(); i++) std::cout<< tokens[i] << " FOO\r\n";
+	if(tokens.size()!=3) return std::string("HTTP/1.1 400 Bad Request\r\n\r\nNot a valid HTTP request\r\n\r\n");
+	if(tokens[0]!="GET") return std::string("HTTP/1.1 501 Not Implemented\r\n\r\nOnly GET method is supported\r\n\r\n");
+	if(tokens[2]!="HTTP/1.1") return std::string("HTTP/1.1 501 Not Implemented\r\n\r\nOnly accepts HTTP 1.1\r\n\r\n");
+	
+	str=tokens[1];
+	if(str[str.size()]=='=' || str.find("=&") != std::string::npos)
+		return std::string("HTTP/1.1 400 Bad Request\r\n\r\nPlease fill out all fields in the form\r\n\r\n");
+	tokens.clear();
+	delimiter = "?";
+	int count=0;
+	std::vector<std::string> retval;
+	while ((pos = str.find(delimiter)) != std::string::npos) {
+		token = str.substr(0, pos);
+		if(token != "") tokens.push_back(token);
+		str.erase(0, pos + delimiter.length());
+		count++;
+	}
+	if(count>1) return std::string("HTTP/1.1 400 Bad Request\r\n\r\nThere can only be one ? in the request\r\n\r\n");
+	tokens.push_back(str);
+	
+	retval.push_back(tokens[0]);
+	if(tokens.size()==2)
+	{
+		str=tokens[1];
+		tokens.clear();
+		delimiter="&";
 	return "HTTP/1.1 200 OK\r\n\r\nhello world\r\n\r\n";
 }
