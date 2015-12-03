@@ -13,33 +13,19 @@
 #include <vector>
 #include <pthread.h>
 #include <map>
-#include "page.h"
+#include "server.h"
 using namespace std;
-
-std::string getReply(std::string str);
 
 static int connFd;
 
-int main(int argc, char* argv[])
+int serverInit(int port)
 {
     int pId, portNo, listenFd;
     socklen_t len; //store size of the address
     bool loop = false;
     struct sockaddr_in svrAdd, clntAdd;
     
-    if (argc < 2)
-    {
-        cerr << "Syntax : ./server <port>" << endl;
-        return 0;
-    }
-    
-    portNo = atoi(argv[1]);
-    
-    if((portNo > 65535) || (portNo < 2000))
-    {
-        cerr << "Please enter a port number between 2000 - 65535" << endl;
-        return 0;
-    }
+    portNo=port;
     
     //create socket
     listenFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -177,15 +163,11 @@ std::string getReply(std::string str)
 	}
 	if(URL[URL.size()-1]=='/') URL+="main.html";
 	URL.erase(0, 1);
-	try {
-		return std::string("HTTP/1.1 200 OK\r\n")+
-			"Content-Type: text/html; charset=ASCII\r\n"+
-			"Connection:close\r\n\r\n"+
-			Pages::getPage(URL, formFields)+"\r\n\r\n";
-	} catch (...) {
-		return std::string("HTTP/1.1 404 Not Found\r\n")+
-			"Content-Type: text/html; charset=ASCII\r\n"+
-			"Connection:close\r\n\r\n"+
-			URL+" is not an existing page\r\n\r\n";
-	}
+    return dataAsString();
+}
+
+std::string dataAsString()
+{
+    return std::string("HTTP/1.1 200 OK\r\n\r\n")+std::to_string(CitrusVision::x)+
+            "\r\n"+std::to_string(CitrusVision::y)+"\r\n\r\n";
 }
