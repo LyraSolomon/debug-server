@@ -17,6 +17,7 @@ void visionInit() {
     cv::namedWindow("webcam");
     while(true) {
         cap >> m;
+        blur(m, m, Size(5, 5));
         cv::imshow("webcam", m);
         waitKey(20);
         x=1;
