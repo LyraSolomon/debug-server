@@ -4,5 +4,6 @@ cc_library(
 	hdrs = glob(["**/*.h"]),
 	deps = ["//opencv"],
 	includes = ["./"],
+	defines = ["DISABLE_VISION"],
 	visibility = ["//visibility:public"]
 )

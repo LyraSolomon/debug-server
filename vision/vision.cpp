@@ -5,6 +5,7 @@ namespace CitrusVision {
 float x=0, y=0;
 bool found=false;
 void visionInit() {
+#ifndef DISABLE_VISION
     using namespace cv;
     using namespace std;
     cv::VideoCapture cap;
@@ -61,5 +62,8 @@ void visionInit() {
         cv::imshow("webcam", m);
         waitKey(20);
     }
+#else
+#warning DISABLE_VISION has been defined. to enable vision, comment out the line in vision/BUILD.
+#endif
 }
 }// namespace CitrusVision
