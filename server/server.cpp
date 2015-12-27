@@ -48,13 +48,10 @@ int serverInit(int port)
         return 0;
     }
     
-    listen(listenFd, 5);
-    
-    len = sizeof(clntAdd);
-
     while (true)
     {
-        cout << "Listening" << endl;
+        listen(listenFd, 5);
+        len = sizeof(clntAdd);
 
         //this is where client connects. svr will hang in this mode until client conn
         connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
@@ -63,10 +60,6 @@ int serverInit(int port)
         {
             cerr << "Cannot accept connection" << endl;
             return 0;
-        }
-        else
-        {
-            cout << "Connection successful" << endl;
         }
         
         char test[257];
@@ -85,7 +78,6 @@ int serverInit(int port)
 		std::string reply;
 		reply=getReply(str);
 		write(connFd, reply.c_str(), reply.length());
-		cout << "\nClosing thread and conn" << endl;
 		close(connFd);
     }
 }
@@ -102,7 +94,6 @@ std::string getReply(std::string str)
 		str.erase(0, pos + delimiter.length());
 	}
 	str=tokens[0];
-	std::cout<<str<<" FOO\r\n";
 	tokens.clear();
 	delimiter = " ";
 	while ((pos = str.find(delimiter)) != std::string::npos) {
