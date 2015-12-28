@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <strings.h>
@@ -75,7 +76,23 @@ int clientInit(int port, char* url)
 	    close(sockfd);
 	    continue;
 	}
-        std::cout<<str<<"\n";
+	std::string delimiter = "\r\n";
+	std::vector<std::string> tokens;
+	size_t pos = 0;
+	std::string token;
+	while ((pos = str.find(delimiter)) != std::string::npos) {
+		token = str.substr(0, pos);
+		if(token != "") tokens.push_back(token);
+		str.erase(0, pos + delimiter.length());
+	}
+	if(tokens[0] != "HTTP/1.1 200 OK"){
+	    std::cerr<<"could not get valid response";
+	    close(sockfd);
+	    continue;
+	}
+	x=atoi(tokens[1].c_str());
+	y=atoi(tokens[2].c_str());
+        std::cout<<"x="<<x<<" y="<<y<<std::endl;
         close(sockfd);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
