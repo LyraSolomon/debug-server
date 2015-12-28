@@ -63,22 +63,23 @@ int serverInit(int port)
         }
         
         char test[257];
-		std::string str="";
-		bool loop = true;
-		while(loop)
-		{    
-			bzero(test, 257);
-			int i=read(connFd, test, 256);
-			if(i==0) break;
-			str += test;
-			
-			if(str.find("\r\n\r\n")!=std::string::npos) loop=false;
-		}
-		if(loop) continue;
-		std::string reply;
-		reply=getReply(str);
-		write(connFd, reply.c_str(), reply.length());
-		close(connFd);
+	std::string str="";
+        int i;
+	for(i=0; str.find("\r\n\r\n")==std::string::npos; i++)
+	{    
+	    bzero(test, 257);
+	    int n=read(connFd, test, 256);
+	    if(n==0) break;
+	    str += test;
+	}
+	if(i==0) {
+	    close(connFd);
+	    continue;
+	}
+	std::string reply;
+	reply=getReply(str);
+	write(connFd, reply.c_str(), reply.length());
+	close(connFd);
     }
 }
 

@@ -33,12 +33,14 @@ int clientInit(int port, char* url)
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) {
 	    std::cerr<<"ERROR opening socket\n";
-	    return 0;
+	    close(sockfd);
+	    continue;
 	}
 	server = gethostbyname(url);
 	if (server == NULL) {
 	    std::cerr<<"ERROR, no such host\n";
-	    exit(0);
+	    close(sockfd);
+	    continue;
 	}
 	bzero((char *) &serv_addr, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
@@ -49,25 +51,31 @@ int clientInit(int port, char* url)
 
         if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
             std::cerr<<"ERROR connecting\n";
-            return 0;
+	    close(sockfd);
+	    continue;
         }
-        std::cerr<<"got here2\n";
         std::string request="GET / HTTP/1.1\r\n\r\n";
         n = write(sockfd,request.c_str(), request.length());
         if (n < 0) {
-             std::cerr<<"ERROR writing to socket\n";
-             return 0;
+            std::cerr<<"ERROR writing to socket\n";
+	    close(sockfd);
+	    continue;
         }
-        std::cerr<<"got here3\n";
-        char buffer[256];
-        bzero(buffer,256);
-        std::cerr<<"got here6\n";
-        n = read(sockfd,buffer,255);
-        std::cerr<<"got here7\n";
-        if (n < 0) {
-             std::cerr<<"ERROR reading from socket\n";
-        }
-        std::cout<<buffer<<"\n";
+        char test[257];
+	std::string str="";
+        int i;
+	for(i=0; str.find("\r\n\r\n")==std::string::npos; i++)
+	{    
+	    bzero(test, 257);
+	    n=read(sockfd, test, 256);
+	    if(n==0) break;
+	    str += test;
+	}
+	if(i==0) {
+	    close(sockfd);
+	    continue;
+	}
+        std::cout<<str<<"\n";
         close(sockfd);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
