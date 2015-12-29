@@ -4,5 +4,4 @@ cc_library(
 	hdrs = glob(["**/*.h"]),
 	includes = ["./"],
 	visibility = ["//visibility:public"],
-	deps = ["//vision"]
 )

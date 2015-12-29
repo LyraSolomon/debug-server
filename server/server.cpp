@@ -154,11 +154,5 @@ std::string getReply(std::string str)
 	}
 	if(URL[URL.size()-1]=='/') URL+="main.html";
 	URL.erase(0, 1);
-    return dataAsString();
-}
-
-std::string dataAsString()
-{
-    return std::string("HTTP/1.1 200 OK\r\n\r\n")+std::to_string(CitrusVision::x)+
-            "\r\n"+std::to_string(CitrusVision::y)+"\r\n\r\n";
+        return getPage(URL, formFields);
 }
