@@ -154,5 +154,5 @@ std::string getReply(std::string str)
 	}
 	if(URL[URL.size()-1]=='/') URL+="main.html";
 	URL.erase(0, 1);
-        return getPage(URL, formFields);
+        return std::string("HTTP/1.1 200 OK\r\n\r\n")+getPage(URL, formFields)+"\r\n\r\n";
 }

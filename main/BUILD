@@ -1,7 +1,7 @@
 cc_binary(
 	name = "main",
 	srcs = glob(["**/*.cpp"]),
-	deps = ["//vision","//server"],
+	deps = ["//server"],
 	linkopts = ["-lpthread"],
 	visibility = ["//visibility:public"]
 )
