@@ -1,14 +1,12 @@
 #include "graphs.h"
-
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#include <iostream>
 
 std::string Graphs::getContents(std::string URL, std::map<std::string, std::string> formFields) {
         if(URL.compare("add_graph_data.html")==0) {
                 if(formFields.count("title")>0 && formFields.count("data")>0 ) {
                         int index=-1;
                         for(unsigned int i=0; i<contents.size(); i++) {
-                                if(contents[i].title.compare(formFields["title"])) {
+                                if(contents[i].title.compare(formFields["title"])==0) {
                                         index=i;
                                         break;
                                 }
@@ -42,15 +40,16 @@ std::string Graphs::getContents(std::string URL, std::map<std::string, std::stri
                         "<div id=\"include\"></div></body></html>";
         }
         if(URL.compare("dynamic_graphs.html")==0) {
-                std::string retval="";
+                std::string retval="<h1>Graph Viewer</h1>";
+		if(contents.size()==0) retval+="<p>(no graphs yet)</p>";
                 for(unsigned int i=0; i<contents.size(); i++) {
                         retval+="<h2>"+contents[i].title+"</h2><svg width=\"200\" height=\"110\">" +
-                                "<polygon points=\"0,5 100,5 100,105 0,105\"" +
+                                "<polygon points=\"0,5 100,5 100,105 0,105\" " +
                                 "style=\"fill:none;stroke:black;stroke-width:1;\" />";
                         if(contents[i].max>contents[i].min && historySize>1) {
                                 retval+="<polyline points=\"";
-                                int start=MAX(0, contents[i].data.size()-historySize);
-                                for(unsigned int j=start; j<contents[i].data.size(); i++) {
+                                int start=MAX(0, ((float)(contents[i].data.size()))-historySize);
+                                for(unsigned int j=start; j<contents[i].data.size(); j++) {
                                         retval+=std::to_string((j-start)*100/(contents[i].data.size()-start-1));
                                         retval+=",";
                                         retval+=std::to_string((-(contents[i].data[j]-contents[i].min)/

@@ -16,6 +16,7 @@
 #include "server.h"
 using namespace std;
 
+bool shouldExit=false;
 static int connFd;
 
 int serverInit(int port)
@@ -27,29 +28,29 @@ int serverInit(int port)
     
     portNo=port;
     
-    //create socket
-    listenFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+  //create socket
+  listenFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     
-    if(listenFd < 0)
-    {
-        cerr << "Cannot open socket" << endl;
-        return 0;
-    }
+    	if(listenFd < 0)
+    	{
+    	    cerr << "Cannot open socket" << endl;
+    	    return 0;
+    	}
     
-    bzero((char*) &svrAdd, sizeof(svrAdd));
+    	bzero((char*) &svrAdd, sizeof(svrAdd));
     
-    svrAdd.sin_family = AF_INET;
-    svrAdd.sin_addr.s_addr = INADDR_ANY;
-    svrAdd.sin_port = htons(portNo);
+    	svrAdd.sin_family = AF_INET;
+    	svrAdd.sin_addr.s_addr = INADDR_ANY;
+    	svrAdd.sin_port = htons(portNo);
     
-    //bind socket
-    if(bind(listenFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0)
-    {
-        cerr << "Cannot bind" << endl;
-        return 0;
-    }
+    	//bind socket
+    	if(bind(listenFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0)
+    	{
+    	    cerr << "Cannot bind" << endl;
+    	    return 0;
+    	}
     
-    while (true)
+    while (!shouldExit)
     {
         listen(listenFd, 5);
         len = sizeof(clntAdd);
@@ -82,6 +83,7 @@ int serverInit(int port)
 	write(connFd, reply.c_str(), reply.length());
 	close(connFd);
     }
+	close(listenFd);
 }
 
 std::string getReply(std::string str)
@@ -155,6 +157,10 @@ std::string getReply(std::string str)
 	}
 	if(URL[URL.size()-1]=='/') URL+="main.html";
 	URL.erase(0, 1);
+	if(URL.compare("exit.html")==0) {
+		shouldExit=true;
+		return "HTTP/1.1 200 OK\r\n\r\nServer quitting.\r\n\r\n";
+	}
         try {
 		return std::string("HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n")+getPage(URL, formFields)+"\r\n\r\n";
 	} catch(std::string error) {
