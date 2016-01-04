@@ -20,6 +20,7 @@ static int connFd;
 
 int serverInit(int port)
 {
+    initPageList();
     int portNo, listenFd;
     socklen_t len; //store size of the address
     struct sockaddr_in svrAdd, clntAdd;
@@ -154,5 +155,10 @@ std::string getReply(std::string str)
 	}
 	if(URL[URL.size()-1]=='/') URL+="main.html";
 	URL.erase(0, 1);
-        return std::string("HTTP/1.1 200 OK\r\n\r\n")+getPage(URL, formFields)+"\r\n\r\n";
+        try {
+		return std::string("HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n")+getPage(URL, formFields)+"\r\n\r\n";
+	} catch(std::string error) {
+		if(error.compare("404")==0) return std::string("HTTP/1.1 404 Not Found\r\n\r\n404: "+URL+" does not exist\r\n\r\n");
+		else return std::string("HTTP/1.1 500 Internal Server Error\r\n\r\nThe server encountered a problem:<br>"+error+"\r\n\r\n");
+	}
 }
