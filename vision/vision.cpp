@@ -58,7 +58,7 @@ void visionInit() {
             y=(boundRect[maxArea].tl().y+boundRect[maxArea].br().y)/2;
             x=x/m.cols-0.5;
             y=y/m.rows-0.5;
-            //cout<<"x="<<x<<" y="<<y<<endl;
+            cout<<"x="<<x<<" y="<<y<<endl;
         }
         cv::imshow("webcam", m);
         waitKey(20);

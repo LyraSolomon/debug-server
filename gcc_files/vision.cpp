@@ -10,15 +10,15 @@ void visionInit() {
     using namespace std;
     cv::VideoCapture cap;
     cv::Mat m=cv::Mat(100, 100, CV_32F, cv::Scalar(255, 255, 255));
-    cv::namedWindow("webcam", CV_WINDOW_AUTOSIZE);
-    cv::imshow("webcam", m);
+    //cv::namedWindow("webcam", CV_WINDOW_AUTOSIZE);
+    //cv::imshow("webcam", m);
     waitKey(20);
     std::cout<<"opening webcam (this will take about 10 seconds)\n";
     if(!cap.open(0)) {
         std::cout<< "could not open camera";
         exit(0);
     }
-    cv::namedWindow("webcam");
+    //cv::namedWindow("webcam");
     while(true) {
         cap >> m;
         blur(m, m, Size(5, 5));
@@ -51,17 +51,17 @@ void visionInit() {
             for( unsigned int i = 0; i< contours.size(); i++ ) {
                 if (boundRect[i].area()>400){
                     if (boundRect[i].area()>boundRect[maxArea].area()) maxArea=i;
-                    rectangle( m, boundRect[i].tl(), boundRect[i].br(), Scalar(255), 2, 8, 0 );
+//                    rectangle( m, boundRect[i].tl(), boundRect[i].br(), Scalar(255), 2, 8, 0 );
                 }
             }
             x=(boundRect[maxArea].tl().x+boundRect[maxArea].br().x)/2;
             y=(boundRect[maxArea].tl().y+boundRect[maxArea].br().y)/2;
             x=x/m.cols-0.5;
             y=y/m.rows-0.5;
-            //cout<<"x="<<x<<" y="<<y<<endl;
+            cout<<"x="<<x<<" y="<<y<<endl;
         }
-        cv::imshow("webcam", m);
-        waitKey(20);
+        //cv::imshow("webcam", m);
+        //waitKey(20);
     }
 #else
 #warning DISABLE_VISION has been defined. to enable vision, comment out the line in vision/BUILD.

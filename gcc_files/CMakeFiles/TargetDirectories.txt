@@ -1,0 +1,1 @@
+/media/pi/USB_drive/vision/CMakeFiles/Vision.dir

@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 2.8)
+project(Vision)
+SET(CMAKE_CXX_FLAGS "-std=c++11")
+find_package(OpenCV REQUIRED)
+find_package(Threads)
+add_executable(Vision main.cpp server.cpp vision.cpp)
+target_link_libraries(Vision ${CKAME_THREAD_LIBS_TNIT} ${OpenCV_LIBS} )
