@@ -1,9 +1,8 @@
 cc_library(
-	name = "vision",
+	name = "reader",
 	srcs = glob(["**/*.cpp"]),
 	hdrs = glob(["**/*.h"]),
-	deps = ["//opencv", "//reader"],
+	deps = ["//opencv"],
 	includes = ["./"],
-#	defines = ["DISABLE_VISION"],
 	visibility = ["//visibility:public"]
 )
