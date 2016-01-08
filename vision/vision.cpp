@@ -1,4 +1,5 @@
 #include "vision.h"
+#include "reader.h"
 #include <iostream>
 #include <vector>
 namespace CitrusVision {
@@ -8,21 +9,14 @@ void visionInit() {
 #ifndef DISABLE_VISION
     using namespace cv;
     using namespace std;
-    cv::VideoCapture cap;
     cv::Mat m=cv::Mat(100, 100, CV_32F, cv::Scalar(255, 255, 255));
     cv::namedWindow("webcam", CV_WINDOW_AUTOSIZE);
     cv::imshow("webcam", m);
     waitKey(20);
-    std::cout<<"opening webcam (this will take about 10 seconds)\n";
-    if(!cap.open(0)) {
-        std::cout<< "could not open camera";
-        exit(0);
-    }
     cv::namedWindow("webcam");
     while(true) {
-        cap >> m;
+        m=getFrame();
         blur(m, m, Size(5, 5));
-        //inRange(m, Scalar(0, 0, 50), Scalar(120, 60, 256), m);
         inRange(m, Scalar(0, 0, 50), Scalar(50, 50, 256), m);
         int erosion_size=15;
         erode(m, m, getStructuringElement(MORPH_RECT,
@@ -32,8 +26,6 @@ void visionInit() {
         dilate(m, m, getStructuringElement(MORPH_RECT,
                     Size( 2*erosion_size + 1, 2*erosion_size+1 ),
                     Point( erosion_size, erosion_size )));
-        //threshhold
-        //inRange(m, Scalar(0, 0, 0), Scalar(0, 0, 0), m);
         vector<vector<Point> > contours;
         vector<Vec4i> hierarchy;
         findContours( m.clone(), contours, hierarchy,
