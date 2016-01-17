@@ -32,7 +32,7 @@ std::string Graphs::getContents(std::string URL, std::map<std::string, std::stri
         }
         if(URL.compare("graphs.html")==0) {
                 if(formFields.count("size") > 0) historySize=std::stoi(formFields["size"]);
-                return std::string("<!doctype html><html><head><script src=\"jquery-2.1.4.min.js\"></script>") +
+                return std::string("<!doctype html><html><head><script src=\"jquery-2.1.4.min.js\"></script><link type=\"text/css\" rel=\"stylesheet\" href=\"style.css\" />") +
                         "<script>$(function(){setInterval(function(){" + 
                         "$('#include').load('dynamic_graphs.html');}, 300);});" +
                         "</script></head><body><div id=\"foo\"></div><form id=\"history\">" +

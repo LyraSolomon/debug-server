@@ -3,7 +3,7 @@
 std::string Text::getContents(std::string URL, std::map<std::string, std::string> formFields) {
 	if(URL.compare("text.html")==0) {
 		if(formFields.count("size")==1) historySize=std::stoi(formFields["size"]);
-		return std::string("<!doctype html><html><head><script src=\"jquery-2.1.4.min.js\">")+ 
+		return std::string("<!doctype html><html><head><script src=\"jquery-2.1.4.min.js\"><link type=\"text/css\" rel=\"stylesheet\" href=\"style.css\" />")+ 
 			"</script><script>$(function(){setInterval(function(){"
 			+ "$('#include').load('dynamic_text.html');}, 300);});</script>"
 			+ "<style>table, th, td { border:1px solid black; border-collapse:collapse; }"
@@ -33,7 +33,7 @@ std::string Text::getContents(std::string URL, std::map<std::string, std::string
 	}
 	if(URL.compare("dynamic_text.html")==0) {
 		std::string retval="<table><tr><th>category</th><th>message</th><th>time</th></tr><br />";
-		for(int i=MIN(data.size()-1, historySize-1); i>=0; i--) {
+		for(int i=MIN((int)data.size()-1, historySize-1); i>=0; i--) {
 			retval+="<tr style=\"color:"+data[i].color+";\">"
 			+ "<td>["+data[i].category+"]</td><td>"+data[i].message+"</td><td>";
 			/*+ std::to_string(data[i].time/3600000)+":"
